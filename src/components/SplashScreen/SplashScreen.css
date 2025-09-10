@@ -21,7 +21,7 @@
 }
 
 .splash-title {
-  font-family: var(--main-font);
+  font-family: var(--main-font-Hollow);
   font-size: 3rem;
   color: var(--color-text);
   animation: title-slide-in 1.5s ease-out forwards; /* Animação de entrada */
@@ -53,8 +53,8 @@
   }
 }
 
-/* Opcional: Animação para a splash screen desaparecer */
-/*
+/* Animação para a splash screen desaparecer */
+
 .splash-container.fade-out {
   animation: fade-out 0.5s ease-out forwards;
 }
@@ -63,4 +63,3 @@
   0% { opacity: 1; }
   100% { opacity: 0; visibility: hidden; }
 }
-*/

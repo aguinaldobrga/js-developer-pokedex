@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PokemonList } from '../../components/PokemonList';
 import { PokemonDetail } from '../../components/PokemonDetail';
+import './Home.css';
 
 export function HomePage() {
   const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
@@ -17,8 +18,11 @@ export function HomePage() {
     <div style={{ padding: '20px' }}>
       {selectedPokemon ? (
         <>
-          <button onClick={handleGoBack}>Voltar</button>
-          <PokemonDetail pokemonName={selectedPokemon} />
+          <button className="btn-page" onClick={handleGoBack}>Voltar</button>
+          <PokemonDetail
+            pokemonName={selectedPokemon}
+            onSelectPokemon={handlePokemonSelect}
+          />
         </>
       ) : (
         <PokemonList onPokemonSelect={handlePokemonSelect} />

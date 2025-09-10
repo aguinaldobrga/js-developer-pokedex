@@ -1,0 +1,21 @@
+.pokedex-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--main-font-Hollow);
+  background-color: var(--primary-color); /* Usando a variável */
+  color: var(--color-text);
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+  height: 5rem;
+}
+
+.pokedex-header-title {
+  position: relative;
+  font-size: 2rem;
+  font-weight: bold;
+  text-decoration: none;
+  
+  
+}
+

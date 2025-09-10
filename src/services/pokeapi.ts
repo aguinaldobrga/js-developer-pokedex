@@ -1,12 +1,22 @@
-// src/services/pokeapi.ts
+import type { Pokemon, PokemonSpecies } from '../interfaces/pokemon';
+import type { PokemonCard } from '../interfaces/pokemon-card';
 
-import type { Pokemon } from '../interfaces/pokemon';
+const POKEMON_LIST_URL = 'https://pokeapi.co/api/v2/pokemon';
 
-const API_BASE_URL = import.meta.env.VITE_POKEAPI_URL;
-const POKEMON_LIST_URL = 'https://pokeapi.co/api/v2/pokemon?limit=151'; // Limite para os 151 originais
+// Interfaces para os dados retornados pela API
+interface PokemonListItem {
+    name: string;
+    url: string;
+}
+
+interface PokemonTypeData {
+    damage_relations: {
+        double_damage_from: { name: string; url: string; }[];
+    };
+}
 
 export async function fetchPokemonByName(name: string): Promise<Pokemon> {
-  const response = await fetch(`${API_BASE_URL}/${name}`);
+  const response = await fetch(`${POKEMON_LIST_URL}/${name}`);
   
   if (!response.ok) {
     throw new Error('Erro ao buscar o Pokémon.');
@@ -16,14 +26,56 @@ export async function fetchPokemonByName(name: string): Promise<Pokemon> {
   return data;
 }
 
-// Nova função para buscar a lista
-export async function fetchPokemonList(): Promise<{ name: string; url: string }[]> {
-  const response = await fetch(POKEMON_LIST_URL);
+export async function fetchPokemonList(limit: number = 12, offset: number = 0): Promise<PokemonCard[]> {
+    const response = await fetch(`${POKEMON_LIST_URL}?offset=${offset}&limit=${limit}`);
 
-  if (!response.ok) {
-    throw new Error('Erro ao buscar a lista de Pokémon.');
+    if (!response.ok) {
+      throw new Error('Erro ao buscar a lista de Pokémon.');
+    }
+
+    const data = await response.json();
+    const results: PokemonListItem[] = data.results;
+
+    const pokemonPromises = results.map(pokemon => 
+        fetchPokemonByName(pokemon.name)
+    );
+
+    const pokemonData = await Promise.all(pokemonPromises);
+    
+    return pokemonData.map((p: Pokemon) => ({
+      id: p.id,
+      name: p.name,
+      photo: p.sprites.front_default,
+      types: p.types,
+    }));
+}
+
+export async function fetchFullPokemonDetails(name: string): Promise<{
+  details: Pokemon;
+  species: PokemonSpecies;
+  weaknesses: string[];
+}> {
+  const [detailsResponse, speciesResponse] = await Promise.all([
+    fetch(`${POKEMON_LIST_URL}/${name}`),
+    // Corrigido: Usando a constante para a URL da espécie
+    fetch(`${POKEMON_LIST_URL}-species/${name}`)
+  ]);
+
+
+  if (!detailsResponse.ok || !speciesResponse.ok) {
+    throw new Error('Erro ao buscar os detalhes do Pokémon.');
   }
 
-  const data = await response.json();
-  return data.results;
+  const details: Pokemon = await detailsResponse.json();
+  const species: PokemonSpecies = await speciesResponse.json();
+
+  const weaknessesPromises = details.types.map(async (type) => {
+    const typeResponse = await fetch(type.type.url);
+    const typeData: PokemonTypeData = await typeResponse.json();
+    return typeData.damage_relations.double_damage_from.map(weakness => weakness.name);
+  });
+
+  const weaknesses = (await Promise.all(weaknessesPromises)).flat();
+  
+  return { details, species, weaknesses };
 }

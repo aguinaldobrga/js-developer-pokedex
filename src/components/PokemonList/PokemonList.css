@@ -1,0 +1,46 @@
+/* src/components/PokemonList/PokemonList.css */
+
+.content {
+  padding: 1rem;
+}
+
+/* Estilo para a lista de Pokémon */
+.pokemons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+}
+
+/* Estilo para a seção de paginação */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+/* Estilo para o botão "Load More" */
+.pagination #loadMoreButton {
+  background-color: var(--primary-color);
+  color: var(--color-text);
+  border: none;
+  border-radius: 20px;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.pagination #loadMoreButton:hover {
+  background-color: var(--segundary-color); 
+}
+
+/* Estilo de carregamento */
+.pagination p {
+  font-weight: bold;
+  color: var(--secondary-color);
+}

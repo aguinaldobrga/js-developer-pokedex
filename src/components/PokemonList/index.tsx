@@ -1,22 +1,44 @@
 import { useState, useEffect } from 'react';
+import { PokemonCardComponent } from '../PokemonCard';
 import { fetchPokemonList } from '../../services/pokeapi';
+import type { PokemonCard } from '../../interfaces/pokemon-card';
+import './PokemonList.css';
 
 interface PokemonListProps {
   onPokemonSelect: (pokemonName: string) => void;
 }
 
+const POKEMON_LIMIT = 12;
+
 export function PokemonList({ onPokemonSelect }: PokemonListProps) {
-  const [pokemonList, setPokemonList] = useState<{ name: string; url: string }[]>([]);
+  const [pokemonList, setPokemonList] = useState<PokemonCard[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [offset, setOffset] = useState(0);
 
   useEffect(() => {
     const loadList = async () => {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchPokemonList();
-        setPokemonList(data);
+        const data = await fetchPokemonList(POKEMON_LIMIT, offset);
+        
+        // Remove duplicatas por ID antes de adicionar à lista
+        const uniqueNewPokemons = data.filter(
+          (newPokemon, index, self) => 
+            index === self.findIndex(t => t.id === newPokemon.id)
+        );
+
+        setPokemonList(prevList => {
+          const combinedList = [...prevList, ...uniqueNewPokemons];
+          // E também remove duplicatas da lista combinada, por segurança
+          const finalUniqueList = combinedList.filter(
+            (pokemon, index, self) => 
+              index === self.findIndex(t => t.id === pokemon.id)
+          );
+          return finalUniqueList;
+        });
+
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message);
@@ -29,25 +51,36 @@ export function PokemonList({ onPokemonSelect }: PokemonListProps) {
     };
 
     loadList();
-  }, []); // O array vazio garante que o useEffect rode apenas uma vez
+  }, [offset]);
 
-  if (loading) return <p>Carregando lista...</p>;
+  const handleLoadMore = () => {
+    setOffset(prevOffset => prevOffset + POKEMON_LIMIT);
+  };
+
+  if (loading && offset === 0) return <p>Carregando lista...</p>;
   if (error) return <p>Erro: {error}</p>;
 
   return (
-    <div>
-      <h2>Lista de Pokémon</h2>
-      <ul>
+    <section className="content">
+      <ol className="pokemons">
         {pokemonList.map(pokemon => (
-          <li 
-            key={pokemon.name} 
-            onClick={() => onPokemonSelect(pokemon.name)} 
-            style={{ cursor: 'pointer', textTransform: 'capitalize' }}
-          >
-            {pokemon.name}
-          </li>
+            <PokemonCardComponent
+                key={pokemon.id}
+                pokemon={pokemon}
+                onClick={() => onPokemonSelect(pokemon.name)}
+            />
         ))}
-      </ul>
-    </div>
+      </ol>
+
+      <div className="pagination">
+        {loading ? (
+            <p>Carregando mais...</p>
+        ) : (
+            <button id="loadMoreButton" type="button" onClick={handleLoadMore}>
+                Load More
+            </button>
+        )}
+      </div>
+    </section>
   );
 }
