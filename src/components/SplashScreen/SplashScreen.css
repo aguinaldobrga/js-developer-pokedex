@@ -1,0 +1,66 @@
+.splash-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: var(--background-color);
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 1000; 
+  overflow: hidden; 
+}
+
+.splash-logo {
+  width: 150px;
+  margin-bottom: 20px;
+  animation: logo-fade-in 1.5s ease-out forwards; /* Animação de entrada */
+  opacity: 0; /* Começa invisível */
+}
+
+.splash-title {
+  font-family: var(--main-font);
+  font-size: 3rem;
+  color: var(--color-text);
+  animation: title-slide-in 1.5s ease-out forwards; /* Animação de entrada */
+  animation-delay: 0.5s; /* Começa um pouco depois do logo */
+  opacity: 0; /* Começa invisível */
+}
+
+/* Keyframes para a animação do logo */
+@keyframes logo-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Keyframes para a animação do título */
+@keyframes title-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Opcional: Animação para a splash screen desaparecer */
+/*
+.splash-container.fade-out {
+  animation: fade-out 0.5s ease-out forwards;
+}
+
+@keyframes fade-out {
+  0% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+*/

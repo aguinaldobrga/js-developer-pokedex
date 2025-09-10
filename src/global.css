@@ -1,0 +1,42 @@
+/* Importe a fonte do Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Epunda+Slab:ital,wght@0,300..900;1,300..900&display=swap');
+
+/* Defina as variáveis CSS no seletor :root */
+:root {
+  /* Cores */
+  --primary-color: #c4b81c;
+  --secondary-color: #3A3A3A;
+  --background-color: #272727;
+  --light-gray: #C8C8C8;
+
+  --color-text: #fff;
+
+  /* Fonte */
+  --main-font: 'Press Start 2P', cursive;
+  --fallback-font: sans-serif;
+  --pincipal-font: "Epunda Slab", serif;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+
+}
+body {
+  background-color: var(--background-color);
+  color: var(--color-text);
+
+}
+
+a {
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+
+ul {
+  list-style: none;
+  padding: 0;
+}
