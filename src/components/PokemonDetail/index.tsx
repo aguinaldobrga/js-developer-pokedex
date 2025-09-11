@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Pokemon, PokemonSpecies } from '../../interfaces/pokemon';
-import { fetchFullPokemonDetails } from '../../services/pokeapi';
+import { fetchFullPokemonDetails, fetchPokemonList } from '../../services/pokeapi';
 import { PokemonEvolution } from '../../components/PokemonEvolution';
 import { PokemonCarouselModal } from '../../components/PokemonCarouselModal';
 import './PokemonDetail.css';
@@ -10,11 +10,14 @@ interface PokemonDetailProps {
   onSelectPokemon: (name: string) => void;
 }
 
+const EXTRA_POKEMON_LIMIT = 9;
+
 export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailProps) {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [species, setSpecies] = useState<PokemonSpecies | null>(null);
   const [weaknesses, setWeaknesses] = useState<string[]>([]);
   const [evolutions, setEvolutions] = useState<Pokemon[]>([]);
+  const [extraPokemons, setExtraPokemons] = useState<Pokemon[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -24,17 +27,21 @@ export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailPro
       try {
         setLoading(true);
         setError(null);
+
         if (pokemonName) {
           const { details, species, weaknesses } = await fetchFullPokemonDetails(pokemonName);
           setPokemon(details);
           setSpecies(species);
           setWeaknesses(weaknesses);
 
+          const evolutionNames: string[] = [];
+
+
+          // Evoluções
           if (species?.evolution_chain?.url) {
             const response = await fetch(species.evolution_chain.url);
             const evolutionData = await response.json();
 
-            const evolutionNames: string[] = [];
             let current = evolutionData.chain;
             while (current) {
               evolutionNames.push(current.species.name);
@@ -49,11 +56,23 @@ export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailPro
 
             setEvolutions(evolutionDetails);
           }
+
+          // Pokémon extras
+          const extraList = await fetchPokemonList(EXTRA_POKEMON_LIMIT, 0);
+          const filtered = extraList.filter(p => !evolutionNames.includes(p.name));
+          const extraDetails = await Promise.all(
+            filtered.map(p =>
+              fetchFullPokemonDetails(p.name).then(res => res.details)
+            )
+          );
+
+          setExtraPokemons(extraDetails);
         } else {
           setPokemon(null);
           setSpecies(null);
           setWeaknesses([]);
           setEvolutions([]);
+          setExtraPokemons([]);
         }
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : 'Ocorreu um erro desconhecido.');
@@ -82,6 +101,8 @@ export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailPro
 
   const malePercentage = species.gender_rate === -1 ? 'N/A' : (8 - species.gender_rate) * 12.5;
   const femalePercentage = species.gender_rate === -1 ? 'N/A' : species.gender_rate * 12.5;
+
+  const combinedPokemons = [...evolutions, ...extraPokemons];
 
   return (
     <div className="pokemon-detail-container">
@@ -124,7 +145,7 @@ export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailPro
 
       {showModal && (
         <PokemonCarouselModal
-          pokemons={evolutions}
+          pokemons={combinedPokemons}
           onClose={() => setShowModal(false)}
           onSelectPokemon={(name) => {
             onSelectPokemon(name);
@@ -135,4 +156,3 @@ export function PokemonDetail({ pokemonName, onSelectPokemon }: PokemonDetailPro
     </div>
   );
 }
-

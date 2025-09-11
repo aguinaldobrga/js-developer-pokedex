@@ -2,9 +2,9 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100vw;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -16,12 +16,13 @@
   padding: 2rem;
   border-radius: 12px;
   color: #fff;
-  width: 90%;
-  max-width: 500px;
+  width: 80%;
+  max-width: 600px;
   text-align: center;
   position: relative;
 }
 
+/* Botão de fechar */
 .close-btn {
   position: absolute;
   top: 10px;
@@ -33,17 +34,79 @@
   cursor: pointer;
 }
 
-.carousel {
+/* Wrapper com setas */
+.carousel-wrapper {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 0.5rem;
+  position: relative;
 }
 
-.pokemon-card {
-  flex: 1;
+/* Setas ◀ ▶ */
+.carousel-arrow {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.carousel-arrow:hover {
+  transform: scale(1.2);
+}
+
+/* Esconde setas no celular */
+@media (max-width: 768px) {
+  .carousel-arrow {
+    display: none;
+  }
+}
+
+/* Container com scroll horizontal */
+.carousel-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.carousel-container::-webkit-scrollbar {
+  display: none;
+}
+
+/* Feedback visual durante arraste */
+.carousel-container.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+/* Faixa de cards */
+.carousel-track {
+  display: flex;
+  gap: 1rem;
   padding: 1rem;
+  list-style: none;
+  margin: 0;
+  min-width: 100%;
 }
 
-.pokemon-card img {
-  width: 120px;
+/* Cada card ocupa 100% da largura visível */
+.carousel-card {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  display: flex;
+  justify-content: center;
+  padding: 0 3rem;
 }
+
+/* Conteúdo do card */
+.carousel-card > * {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+}
+
+
