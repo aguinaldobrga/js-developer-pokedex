@@ -1,20 +1,20 @@
-/* Importe a fonte do Google Fonts */
+
 @import url('https://fonts.googleapis.com/css2?family=Epunda+Slab:ital,wght@0,300..900;1,300..900&display=swap');
 
 @font-face {
-  font-family: 'Pokemon-Hollow'; /* Nome da fonte sem espaços */
+  font-family: 'Pokemon-Hollow'; 
   src: url('./assets/fonts/Pokemon-Hollow.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 @font-face {
-  font-family: 'Pokemon-solid'; /* Nome da fonte sem espaços */
+  font-family: 'Pokemon-solid'; 
   src: url('./assets/fonts/Pokemon-Solid.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
 
-/* Defina as variáveis CSS no seletor :root */
+
 :root {
   /* Cores */
   --primary-color: #c4b81c;
