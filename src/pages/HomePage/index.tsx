@@ -27,6 +27,7 @@ export function HomePage() {
       ) : (
         <PokemonList onPokemonSelect={handlePokemonSelect} />
       )}
+
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Header } from './components/Header';
 import { SplashScreen } from './components/SplashScreen';
 import { HomePage } from './pages/HomePage'; // Importe a sua nova página
+import { Footer } from './components/Footer';
 
 function App() {
   const [showSplash, setShowSplash] = useState(true);
@@ -18,6 +19,7 @@ function App() {
         <>
           <Header />
           <HomePage />
+          <Footer />
         </>
       )}
     </div>
